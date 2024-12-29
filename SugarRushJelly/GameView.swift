@@ -25,11 +25,11 @@ struct GameView: View {
             }
             .opacity(finishLoad ? 0 : 1)
             
-            WKWebViewRepresentable(url: URL(string: "https://plays.org/game/little-world-jellys/")!, onLoadCompletion: {
+            WKWebViewRepresentable(url: URL(string: "https://plays.org/game/little-world-jellys/")!,  onLoadCompletion: {
                 withAnimation {
                     finishLoad = true
                 }
-            })
+            }, permit: false)
             .opacity(!finishLoad ? 0 : 1)
         }
         .navigationBarBackButtonHidden()
@@ -52,13 +52,15 @@ struct WKWebViewRepresentable: UIViewRepresentable {
    typealias UIViewType = WKWebView
    var url: URL
    var webView: WKWebView
+    var permit: Bool
    var onLoadCompletion: (() -> Void)?
 
-   init(url: URL, webView: WKWebView = WKWebView(), onLoadCompletion: (() -> Void)? = nil) {
+    init(url: URL, webView: WKWebView = WKWebView(), onLoadCompletion: (() -> Void)? = nil, permit: Bool) {
        self.url = url
        
        self.webView = webView
        self.webView.layer.opacity = 0
+       self.permit = permit
        self.onLoadCompletion = onLoadCompletion
    }
 
@@ -76,7 +78,7 @@ struct WKWebViewRepresentable: UIViewRepresentable {
    }
 
    func makeCoordinator() -> Coordinator {
-       Coordinator(self)
+       Coordinator(self, permit)
    }
 }
 
@@ -84,11 +86,12 @@ extension WKWebViewRepresentable {
 
    final class Coordinator: NSObject, WKUIDelegate, WKNavigationDelegate {
        var parent: WKWebViewRepresentable
+       let permit: Bool
        private var webViews: [WKWebView]
 
-       init(_ parent: WKWebViewRepresentable) {
+       init(_ parent: WKWebViewRepresentable, _ permit: Bool) {
            self.parent = parent
-           
+           self.permit = permit
            self.webViews = []
        }
 
@@ -121,7 +124,11 @@ extension WKWebViewRepresentable {
        }
 
        func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-           decisionHandler(navigationAction.request.url == URL(string: "https://plays.org/game/little-world-jellys/") ? .allow : .cancel)
+           if permit {
+               decisionHandler(.allow)
+           } else {
+               decisionHandler(navigationAction.request.url == URL(string: "https://plays.org/game/little-world-jellys/") ? .allow : .cancel)
+           }
        }
    }
 

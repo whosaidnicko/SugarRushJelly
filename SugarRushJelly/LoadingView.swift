@@ -27,13 +27,18 @@ struct LoadingView: View {
             
             
         }
+        .fixlibhjesde()
         .onAppear() {
-            withAnimation(Animation.linear(duration: 3.5)) {
-                rotateActing = true
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-                goToMenu = true 
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation(Animation.linear(duration: 3.5)) {
+                    rotateActing = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+                    goToMenu = true 
+                }
             }
         }
+        
+
     }
 }
