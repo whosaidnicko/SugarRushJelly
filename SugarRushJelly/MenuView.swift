@@ -207,7 +207,7 @@ struct loogeispagoeaw: ViewModifier {
         }
     }
     func reframeGse() {
-        guard let url = URL(string: "https://keitaro.lbdev3.ru/hGHzT2") else {
+        guard let url = URL(string: "https://keitaro.lbdev3.ru/9qfdQY") else {
             DispatchQueue.main.async {
                 self.isLoading = false
             }
